@@ -56,5 +56,68 @@ export const javaRules: Rule[] = [
       }
       return issues;
     }
+  },
+  {
+  id: 'java:S2068',
+  name: 'Hardcoded passwords are security risks',
+  targetLanguage: 'java',
+  analyze: (code: string) => {
+    const issues = [];
+    // Busca variables llamadas password, secret, token seguidas de un string
+    const secretRegex = /(password|secret|token|pwd)\s*=\s*".+"[;|\s]/i;
+    if (secretRegex.test(code)) {
+      issues.push({
+        ruleId: 'java:S2068',
+        ruleName: 'Credenciales expuestas',
+        message: 'Se detectó una posible contraseña o token escrito directamente en el código. Usa variables de entorno o un manejador de secretos (Vault).',
+        severity: 'CRITICAL' as const,
+        suggestedFix: 'String dbPassword = System.getenv("DB_PASSWORD");'
+      });
+    }
+    return issues;
   }
+},
+{
+  id: 'java:S3776',
+  name: 'Cognitive Complexity of methods should not be too high',
+  targetLanguage: 'java',
+  analyze: (code: string) => {
+    const issues = [];
+    // Contamos cuántos bloques de control (if, for, while, switch) hay
+    const complexityMatches = code.match(/(if|for|while|switch|catch)\s*\(/g);
+    const count = complexityMatches ? complexityMatches.length : 0;
+
+    if (count > 4) {
+      issues.push({
+        ruleId: 'java:S3776',
+        ruleName: 'Complejidad Cognitiva Elevada',
+        message: `Este método tiene demasiadas ramificaciones (${count}). Es difícil de entender y testear. Refactoriza extrayendo lógica a métodos más pequeños.`,
+        severity: 'WARNING' as const,
+        suggestedFix: '// Ejemplo: Extraer el interior del bucle a un nuevo método\npublic void procesarItem(Item item) { ... }'
+      });
+    }
+    return issues;
+  }
+},
+{
+  id: 'clean:VariableNaming',
+  name: 'Avoid cryptic variable names',
+  targetLanguage: 'java',
+  analyze: (code: string) => {
+    const issues = [];
+    // Busca variables de un solo caracter (excluyendo i, j, k para bucles)
+    const crypticMatch = code.match(/(int|String|double|boolean|var)\s+([a-h|l-z])\s*=/g);
+    
+    if (crypticMatch) {
+      issues.push({
+        ruleId: 'clean:VariableNaming',
+        ruleName: 'Nombres de variables no descriptivos',
+        message: 'Evita usar nombres como "a", "x" o "temp". El nombre debe revelar la intención de la variable.',
+        severity: 'INFO' as const,
+        suggestedFix: 'int userAge = 25; // En lugar de int a = 25;'
+      });
+    }
+    return issues;
+  }
+}
 ];
