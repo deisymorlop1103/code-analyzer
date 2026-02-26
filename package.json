@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/deisymorlop1103/code-analyzer",
+  "homepage": "https://deisymorlop1103.github.io/code-analyzer/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -32,3 +32,4 @@
     "vite": "^7.3.1"
   }
 }
+
